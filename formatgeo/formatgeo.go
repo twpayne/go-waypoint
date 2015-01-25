@@ -61,7 +61,6 @@ func (*T) Read(r io.Reader) (waypoint.Collection, error) {
 				Latitude:    lat,
 				Longitude:   lng,
 				Altitude:    alt,
-				Radius:      0,
 				Description: description,
 			}
 			wc = append(wc, w)
