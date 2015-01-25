@@ -13,8 +13,8 @@ import (
 )
 
 var (
-	idRegExp = regexp.MustCompile(`\A\$FormatGEO\s*\z`)
-	regExp   = regexp.MustCompile(`\A(.*)\s+([NS])\s+(\d+)\s+(\d+)\s+(\d+\.\d+)\s+([EW])\s+(\d+)\s+(\d+)\s+(\d+\.\d+)\s+(-?\d+)(?:\s+(.*))?\z`)
+	idRegexp   = regexp.MustCompile(`\A\$FormatGEO\s*\z`)
+	lineRegexp = regexp.MustCompile(`\A(.*)\s+([NS])\s+(\d+)\s+(\d+)\s+(\d+\.\d+)\s+([EW])\s+(\d+)\s+(\d+)\s+(\d+\.\d+)\s+(-?\d+)(?:\s+(.*))?\z`)
 )
 
 type T struct{}
@@ -32,11 +32,11 @@ func (*T) Read(r io.Reader) (waypoint.Collection, error) {
 		line := scanner.Text()
 		switch {
 		case lineno == 1:
-			if idRegExp.FindString(line) == "" {
+			if idRegexp.FindString(line) == "" {
 				return nil, waypoint.ErrSyntax{LineNo: lineno, Line: line}
 			}
 		default:
-			ss := regExp.FindStringSubmatch(line)
+			ss := lineRegexp.FindStringSubmatch(line)
 			if ss == nil {
 				continue
 			}

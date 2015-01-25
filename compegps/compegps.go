@@ -16,8 +16,8 @@ var (
 		regexp.MustCompile(`\AG\s+WGS\s+84\s*\z`),
 		regexp.MustCompile(`\AU\s+1\s*\z`),
 	}
-	wRegExp  = regexp.MustCompile(`\AW\s+(.{6})\s+A\s+(\d+(?:\.\d*)?).?([NS])\s+(\d+(?:\.\d*)?).?([EW])\s+\S+\s+\S+\s+(\d+(?:\.\d*)?)(.*)\z`)
-	w2RegExp = regexp.MustCompile(`\Aw\s+[^,]*,[^,]*,[^,]*,(\d*),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*\s*\z`)
+	wRegexp  = regexp.MustCompile(`\AW\s+(.{6})\s+A\s+(\d+(?:\.\d*)?).?([NS])\s+(\d+(?:\.\d*)?).?([EW])\s+\S+\s+\S+\s+(\d+(?:\.\d*)?)(.*)\z`)
+	w2Regexp = regexp.MustCompile(`\Aw\s+[^,]*,[^,]*,[^,]*,(\d*),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*\s*\z`)
 )
 
 type T struct{}
@@ -40,7 +40,7 @@ func (*T) Read(r io.Reader) (waypoint.Collection, error) {
 				return nil, waypoint.ErrSyntax{LineNo: lineno, Line: line}
 			}
 		case w == nil:
-			ss := wRegExp.FindStringSubmatch(line)
+			ss := wRegexp.FindStringSubmatch(line)
 			if ss == nil {
 				continue
 			}
@@ -63,7 +63,7 @@ func (*T) Read(r io.Reader) (waypoint.Collection, error) {
 				Description: description,
 			}
 		default:
-			ss := w2RegExp.FindStringSubmatch(line)
+			ss := w2Regexp.FindStringSubmatch(line)
 			if ss != nil {
 				rgb, _ := strconv.ParseInt(ss[1], 10, 64)
 				w.Color = color.RGBA{
