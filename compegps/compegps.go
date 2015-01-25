@@ -4,8 +4,10 @@ import (
 	"bitbucket.org/twpayne/waypoint"
 
 	"bufio"
+	"fmt"
 	"image/color"
 	"io"
+	"math"
 	"regexp"
 	"strconv"
 	"strings"
@@ -83,5 +85,36 @@ func (*T) Read(r io.Reader) (waypoint.Collection, error) {
 }
 
 func (*T) Write(w io.Writer, wc waypoint.Collection) error {
+	for _, s := range []string{
+		"G  WGS 84\r\n",
+		"U  1\r\n",
+	} {
+		if _, err := fmt.Fprintf(w, s); err != nil {
+			return err
+		}
+	}
+	for _, wp := range wc {
+		latHemi := 'N'
+		if wp.Latitude < 0 {
+			latHemi = 'S'
+		}
+		lngHemi := 'E'
+		if wp.Longitude < 0 {
+			lngHemi = 'W'
+		}
+		// FIXME find correct format specifiers for lat and lng
+		if _, err := fmt.Fprintf(w, "W  %6s A %.10f\x5c%c %.11f\x5c%c 27-MAR-62 00:00:00 %.6f %s\r\n",
+			wp.Id, math.Abs(wp.Latitude), latHemi, math.Abs(wp.Longitude), lngHemi, wp.Altitude, wp.Description); err != nil {
+			return err
+		}
+		rgb := 0xffffff
+		if wp.Color != nil {
+			r, g, b, _ := wp.Color.RGBA()
+			rgb = int(r/0x101)<<16 + int(g/0x101)<<8 + int(b/0x101)
+		}
+		if _, err := fmt.Fprintf(w, "w  box,0,0.0,%d,255,1,7,,0.0\r\n", rgb); err != nil {
+			return err
+		}
+	}
 	return nil
 }
