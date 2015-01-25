@@ -4,40 +4,24 @@ import (
 	"bitbucket.org/twpayne/waypoint"
 	"bitbucket.org/twpayne/waypoint/internal/dmsh"
 
+	"bytes"
 	"reflect"
+	"strings"
 	"testing"
 )
 
-func TestDetect(t *testing.T) {
-	for _, c := range []struct {
-		ls   []string
-		want bool
-	}{
-		{ls: []string{}, want: false},
-		{ls: []string{"$FormatGEO"}, want: true},
-		{ls: []string{"$FormatGEO "}, want: true},
-		{ls: []string{"$FormatUTM"}, want: false},
-	} {
-		if got := New().Detect(c.ls); got != c.want {
-			t.Errorf("Detect(%v) == %v, want %v", c.ls, got, c.want)
-		}
-	}
-}
-
 func TestReadWrite(t *testing.T) {
 	for _, c := range []struct {
-		ls []string
+		s  string
 		wc waypoint.Collection
 	}{
 		{
-			ls: []string{
-				"$FormatGEO",
-				"Aconcagu  S 32 39 12.00    W 070 00 42.00  6962  Aconcagua",
-				"Bergneus  N 51 03 07.02    E 007 42 22.02   488  Bergneustadt [A]",
-				"Golden G  N 37 49 03.00    W 122 28 42.00   227  Golden Gate Bridge",
-				"Red Squa  N 55 45 15.00    E 037 37 12.00   123  Red Square",
-				"Sydney O  S 33 51 25.02    E 151 12 54.96     5  Sydney Opera",
-			},
+			s: "$FormatGEO\r\n" +
+				"Aconcagu  S 32 39 12.00    W 070 00 42.00  6962  Aconcagua\r\n" +
+				"Bergneus  N 51 03 07.02    E 007 42 22.02   488  Bergneustadt [A]\r\n" +
+				"Golden G  N 37 49 03.00    W 122 28 42.00   227  Golden Gate Bridge\r\n" +
+				"Red Squa  N 55 45 15.00    E 037 37 12.00   123  Red Square\r\n" +
+				"Sydney O  S 33 51 25.02    E 151 12 54.96     5  Sydney Opera\r\n",
 			wc: waypoint.Collection{
 				&waypoint.T{
 					Id:          "Aconcagu",
@@ -77,13 +61,20 @@ func TestReadWrite(t *testing.T) {
 			},
 		},
 	} {
-		if got, err := New().Read(c.ls); err != nil || !reflect.DeepEqual(got, c.wc) {
+		if got, err := New().Read(strings.NewReader(c.s)); err != nil || !reflect.DeepEqual(got, c.wc) {
 			for i, w := range c.wc {
 				if !reflect.DeepEqual(w, got[i]) {
 					t.Errorf("i=%d w=%v got[%d]=%v", i, w, got[i])
 				}
 			}
-			t.Errorf("Read(%v) == %v, %v, want %v, nil", c.ls, got, err, c.wc)
+			t.Errorf("Read(strings.NewReader(%v)) == %v, %v, want %v, nil", c.s, got, err, c.wc)
+		}
+		w := bytes.NewBuffer(nil)
+		if err := New().Write(w, c.wc); err != nil {
+			t.Errorf("Write(%v) == %v. want nil", c.wc, err)
+		}
+		if w.String() != c.s {
+			t.Errorf("w.String() == %v. want %v", w.String(), c.s)
 		}
 	}
 }
