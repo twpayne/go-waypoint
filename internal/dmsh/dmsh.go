@@ -4,8 +4,8 @@ import (
 	"math"
 )
 
-func D(d, m int, s float64) float64 {
-	return float64(d) + float64(m)/60 + s/3600
+func D(d, m, s float64) float64 {
+	return d + m/60 + s/3600
 }
 
 func DMSH(x float64, hs string) (d, m int, s float64, h string) {

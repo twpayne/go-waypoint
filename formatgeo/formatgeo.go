@@ -43,14 +43,14 @@ func (*T) Read(r io.Reader) (waypoint.Collection, error) {
 			latDeg, _ := strconv.ParseInt(ss[3], 10, 64)
 			latMin, _ := strconv.ParseInt(ss[4], 10, 64)
 			latSec, _ := strconv.ParseFloat(ss[5], 64)
-			lat := dmsh.D(int(latDeg), int(latMin), latSec)
+			lat := dmsh.D(float64(latDeg), float64(latMin), latSec)
 			if ss[2] == "S" {
 				lat = -lat
 			}
 			lngDeg, _ := strconv.ParseInt(ss[7], 10, 64)
 			lngMin, _ := strconv.ParseInt(ss[8], 10, 64)
 			lngSec, _ := strconv.ParseFloat(ss[9], 64)
-			lng := dmsh.D(int(lngDeg), int(lngMin), lngSec)
+			lng := dmsh.D(float64(lngDeg), float64(lngMin), lngSec)
 			if ss[6] == "W" {
 				lng = -lng
 			}
