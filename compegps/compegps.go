@@ -12,8 +12,10 @@ import (
 )
 
 var (
-	gRegExp  = regexp.MustCompile(`\AG\s+WGS\s+84\s*\z`)
-	uRegExp  = regexp.MustCompile(`\AU\s+1\s*\z`)
+	headerRegexps = []*regexp.Regexp{
+		regexp.MustCompile(`\AG\s+WGS\s+84\s*\z`),
+		regexp.MustCompile(`\AU\s+1\s*\z`),
+	}
 	wRegExp  = regexp.MustCompile(`\AW\s+(.{6})\s+A\s+(\d+(?:\.\d*)?).?([NS])\s+(\d+(?:\.\d*)?).?([EW])\s+\S+\s+\S+\s+(\d+(?:\.\d*)?)(.*)\z`)
 	w2RegExp = regexp.MustCompile(`\Aw\s+[^,]*,[^,]*,[^,]*,(\d*),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*\s*\z`)
 )
@@ -33,12 +35,8 @@ func (*T) Read(r io.Reader) (waypoint.Collection, error) {
 		lineno++
 		line := scanner.Text()
 		switch {
-		case lineno == 1:
-			if gRegExp.FindString(line) == "" {
-				return nil, waypoint.ErrSyntax{LineNo: lineno, Line: line}
-			}
-		case lineno == 2:
-			if uRegExp.FindString(line) == "" {
+		case lineno <= 1:
+			if headerRegexps[lineno-1].FindString(line) == "" {
 				return nil, waypoint.ErrSyntax{LineNo: lineno, Line: line}
 			}
 		case w == nil:
