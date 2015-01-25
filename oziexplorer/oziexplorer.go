@@ -4,6 +4,7 @@ import (
 	"bitbucket.org/twpayne/waypoint"
 
 	"bufio"
+	"fmt"
 	"io"
 	"regexp"
 	"strconv"
@@ -67,4 +68,24 @@ func (*T) Read(r io.Reader) (waypoint.Collection, error) {
 		}
 	}
 	return wc, scanner.Err()
+}
+
+func (*T) Write(w io.Writer, wc waypoint.Collection) error {
+	for _, s := range []string{
+		"OziExplorer Waypoint File Version 1.0\r\n",
+		"WGS 84\r\n",
+		"Reserved 2\r\n",
+		"Reserved 3\r\n",
+	} {
+		if _, err := fmt.Fprintf(w, s); err != nil {
+			return err
+		}
+	}
+	for i, wp := range wc {
+		if _, err := fmt.Fprintf(w, "%4d,%s,%11.6f,%11.6f,40652.2883218,0, 1, 3, 0, 65535,%-40s, 0, 0, 0, %d\r\n",
+			i+1, wp.Id, wp.Latitude, wp.Longitude, wp.Description, int(wp.Altitude/0.3048)); err != nil {
+			return err
+		}
+	}
+	return nil
 }
