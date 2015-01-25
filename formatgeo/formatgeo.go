@@ -29,13 +29,14 @@ func (*T) Read(r io.Reader) (waypoint.Collection, error) {
 	lineno := 0
 	for scanner.Scan() {
 		lineno++
+		line := scanner.Text()
 		switch {
 		case lineno == 1:
-			if idRegExp.FindString(scanner.Text()) == "" {
-				return nil, nil // FIXME
+			if idRegExp.FindString(line) == "" {
+				return nil, waypoint.ErrSyntax{LineNo: lineno, Line: line}
 			}
 		default:
-			ss := regExp.FindStringSubmatch(scanner.Text())
+			ss := regExp.FindStringSubmatch(line)
 			if ss == nil {
 				continue
 			}
