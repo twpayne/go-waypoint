@@ -77,7 +77,7 @@ func (*T) Write(w io.Writer, wc waypoint.Collection) error {
 	for _, wp := range wc {
 		latDeg, latMin, latSec, latHemi := dmsh.DMSH(wp.Latitude, "NS")
 		lngDeg, lngMin, lngSec, lngHemi := dmsh.DMSH(wp.Longitude, "EW")
-		if _, err := fmt.Fprintf(w, "%-8s  %s %02d %02d %05.2f    %s %03d %02d %05.2f  %4d  %s\r\n", wp.Id, latHemi, latDeg, latMin, latSec, lngHemi, lngDeg, lngMin, lngSec, int(wp.Altitude), wp.Description); err != nil {
+		if _, err := fmt.Fprintf(w, "%-8s  %c %02d %02d %05.2f    %c %03d %02d %05.2f  %4d  %s\r\n", wp.Id, latHemi, latDeg, latMin, latSec, lngHemi, lngDeg, lngMin, lngSec, int(wp.Altitude), wp.Description); err != nil {
 			return err
 		}
 	}

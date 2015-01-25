@@ -8,12 +8,12 @@ func D(d, m, s float64) float64 {
 	return d + m/60 + s/3600
 }
 
-func DMSH(x float64, hs string) (d, m int, s float64, h string) {
+func DMSH(x float64, hs string) (d, m int, s float64, h uint8) {
 	if x < 0 {
-		h = hs[1:2]
+		h = hs[1]
 		x = -x
 	} else {
-		h = hs[:1]
+		h = hs[0]
 	}
 	d = int(x)
 	m = int(60*x) % 60
