@@ -17,7 +17,6 @@ func (e ErrSyntax) Error() string {
 
 type T struct {
 	Id          string
-	Name        string
 	Description string
 	Latitude    float64
 	Longitude   float64
@@ -28,9 +27,6 @@ type T struct {
 
 func Equal(t1, t2 *T) bool {
 	if t1.Id != t2.Id {
-		return false
-	}
-	if t1.Name != t2.Name {
 		return false
 	}
 	if t1.Description != t2.Description {
@@ -81,9 +77,6 @@ func (w *T) MarshalJSON() ([]byte, error) {
 	}
 	if w.Description != "" {
 		properties["description"] = w.Description
-	}
-	if w.Name != "" {
-		properties["name"] = w.Name
 	}
 	if w.Radius > 0 {
 		properties["radius"] = w.Radius
