@@ -6,6 +6,15 @@ import (
 	"image/color"
 )
 
+type ErrSyntax struct {
+	LineNo int
+	Line   string
+}
+
+func (e ErrSyntax) Error() string {
+	return fmt.Sprintf("syntax error:%d: %v", e.LineNo, e.Line)
+}
+
 type T struct {
 	Id          string
 	Name        string
