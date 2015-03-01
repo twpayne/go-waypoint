@@ -1,4 +1,4 @@
-package dmsh
+package waypoint
 
 import (
 	"math"

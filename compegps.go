@@ -1,8 +1,6 @@
-package compegps
+package waypoint
 
 import (
-	"bitbucket.org/twpayne/waypoint"
-
 	"bufio"
 	"fmt"
 	"image/color"
@@ -14,35 +12,35 @@ import (
 )
 
 var (
-	headerRegexps = []*regexp.Regexp{
+	compeGPSHeaderRegexps = []*regexp.Regexp{
 		regexp.MustCompile(`\AG\s+WGS\s+84\s*\z`),
 		regexp.MustCompile(`\AU\s+1\s*\z`),
 	}
-	wRegexp  = regexp.MustCompile(`\AW\s+(.{6})\s+A\s+(\d+(?:\.\d*)?).?([NS])\s+(\d+(?:\.\d*)?).?([EW])\s+\S+\s+\S+\s+(\d+(?:\.\d*)?)(.*)\z`)
-	w2Regexp = regexp.MustCompile(`\Aw\s+[^,]*,[^,]*,[^,]*,(\d*),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*\s*\z`)
+	compeGPSWRegexp  = regexp.MustCompile(`\AW\s+(.{6})\s+A\s+(\d+(?:\.\d*)?).?([NS])\s+(\d+(?:\.\d*)?).?([EW])\s+\S+\s+\S+\s+(\d+(?:\.\d*)?)(.*)\z`)
+	compeGPSW2Regexp = regexp.MustCompile(`\Aw\s+[^,]*,[^,]*,[^,]*,(\d*),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*\s*\z`)
 )
 
-type T struct{}
+type CompeGPSFormat struct{}
 
-func New() *T {
-	return &T{}
+func NewCompeGPSFormat() *CompeGPSFormat {
+	return &CompeGPSFormat{}
 }
 
-func (*T) Read(r io.Reader) (waypoint.Collection, error) {
-	var wc waypoint.Collection
+func (*CompeGPSFormat) Read(r io.Reader) (Collection, error) {
+	var wc Collection
 	scanner := bufio.NewScanner(r)
 	lineno := 0
-	var w *waypoint.T
+	var w *T
 	for scanner.Scan() {
 		lineno++
 		line := scanner.Text()
 		switch {
 		case lineno <= 1:
-			if headerRegexps[lineno-1].FindString(line) == "" {
-				return nil, waypoint.ErrSyntax{LineNo: lineno, Line: line}
+			if compeGPSHeaderRegexps[lineno-1].FindString(line) == "" {
+				return nil, ErrSyntax{LineNo: lineno, Line: line}
 			}
 		case w == nil:
-			ss := wRegexp.FindStringSubmatch(line)
+			ss := compeGPSWRegexp.FindStringSubmatch(line)
 			if ss == nil {
 				continue
 			}
@@ -57,7 +55,7 @@ func (*T) Read(r io.Reader) (waypoint.Collection, error) {
 			}
 			alt, _ := strconv.ParseFloat(ss[6], 64)
 			description := strings.TrimSpace(ss[7])
-			w = &waypoint.T{
+			w = &T{
 				Id:          id,
 				Latitude:    lat,
 				Longitude:   lng,
@@ -65,7 +63,7 @@ func (*T) Read(r io.Reader) (waypoint.Collection, error) {
 				Description: description,
 			}
 		default:
-			ss := w2Regexp.FindStringSubmatch(line)
+			ss := compeGPSW2Regexp.FindStringSubmatch(line)
 			if ss != nil {
 				rgb, _ := strconv.ParseInt(ss[1], 10, 64)
 				w.Color = color.RGBA{
@@ -84,7 +82,7 @@ func (*T) Read(r io.Reader) (waypoint.Collection, error) {
 	return wc, scanner.Err()
 }
 
-func (*T) Write(w io.Writer, wc waypoint.Collection) error {
+func (*CompeGPSFormat) Write(w io.Writer, wc Collection) error {
 	for _, s := range []string{
 		"G  WGS 84\r\n",
 		"U  1\r\n",

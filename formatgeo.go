@@ -1,9 +1,6 @@
-package formatgeo
+package waypoint
 
 import (
-	"bitbucket.org/twpayne/waypoint"
-	"bitbucket.org/twpayne/waypoint/internal/dmsh"
-
 	"bufio"
 	"fmt"
 	"io"
@@ -13,18 +10,18 @@ import (
 )
 
 var (
-	idRegexp   = regexp.MustCompile(`\A\$FormatGEO\s*\z`)
-	lineRegexp = regexp.MustCompile(`\A(.*)\s+([NS])\s+(\d+)\s+(\d+)\s+(\d+\.\d+)\s+([EW])\s+(\d+)\s+(\d+)\s+(\d+\.\d+)\s+(-?\d+)(?:\s+(.*))?\z`)
+	formatGeoIdRegexp   = regexp.MustCompile(`\A\$FormatGEO\s*\z`)
+	formatGeoLineRegexp = regexp.MustCompile(`\A(.*)\s+([NS])\s+(\d+)\s+(\d+)\s+(\d+\.\d+)\s+([EW])\s+(\d+)\s+(\d+)\s+(\d+\.\d+)\s+(-?\d+)(?:\s+(.*))?\z`)
 )
 
-type T struct{}
+type FormatGeoFormat struct{}
 
-func New() *T {
-	return &T{}
+func NewFormatGeoFormat() *FormatGeoFormat {
+	return &FormatGeoFormat{}
 }
 
-func (*T) Read(r io.Reader) (waypoint.Collection, error) {
-	var wc waypoint.Collection
+func (*FormatGeoFormat) Read(r io.Reader) (Collection, error) {
+	var wc Collection
 	scanner := bufio.NewScanner(r)
 	lineno := 0
 	for scanner.Scan() {
@@ -32,32 +29,32 @@ func (*T) Read(r io.Reader) (waypoint.Collection, error) {
 		line := scanner.Text()
 		switch {
 		case lineno == 1:
-			if idRegexp.FindString(line) == "" {
-				return nil, waypoint.ErrSyntax{LineNo: lineno, Line: line}
+			if formatGeoIdRegexp.FindString(line) == "" {
+				return nil, ErrSyntax{LineNo: lineno, Line: line}
 			}
 		default:
-			ss := lineRegexp.FindStringSubmatch(line)
+			ss := formatGeoLineRegexp.FindStringSubmatch(line)
 			if ss == nil {
 				continue
 			}
 			latDeg, _ := strconv.ParseInt(ss[3], 10, 64)
 			latMin, _ := strconv.ParseInt(ss[4], 10, 64)
 			latSec, _ := strconv.ParseFloat(ss[5], 64)
-			lat := dmsh.D(float64(latDeg), float64(latMin), latSec)
+			lat := D(float64(latDeg), float64(latMin), latSec)
 			if ss[2] == "S" {
 				lat = -lat
 			}
 			lngDeg, _ := strconv.ParseInt(ss[7], 10, 64)
 			lngMin, _ := strconv.ParseInt(ss[8], 10, 64)
 			lngSec, _ := strconv.ParseFloat(ss[9], 64)
-			lng := dmsh.D(float64(lngDeg), float64(lngMin), lngSec)
+			lng := D(float64(lngDeg), float64(lngMin), lngSec)
 			if ss[6] == "W" {
 				lng = -lng
 			}
 			alt, _ := strconv.ParseFloat(ss[10], 64)
 			id := strings.TrimSpace(ss[1])
 			description := strings.TrimSpace(ss[11])
-			w := &waypoint.T{
+			w := &T{
 				Id:          id,
 				Latitude:    lat,
 				Longitude:   lng,
@@ -70,13 +67,13 @@ func (*T) Read(r io.Reader) (waypoint.Collection, error) {
 	return wc, scanner.Err()
 }
 
-func (*T) Write(w io.Writer, wc waypoint.Collection) error {
+func (*FormatGeoFormat) Write(w io.Writer, wc Collection) error {
 	if _, err := fmt.Fprintf(w, "$FormatGEO\r\n"); err != nil {
 		return err
 	}
 	for _, wp := range wc {
-		latDeg, latMin, latSec, latHemi := dmsh.DMSH(wp.Latitude, "NS")
-		lngDeg, lngMin, lngSec, lngHemi := dmsh.DMSH(wp.Longitude, "EW")
+		latDeg, latMin, latSec, latHemi := DMSH(wp.Latitude, "NS")
+		lngDeg, lngMin, lngSec, lngHemi := DMSH(wp.Longitude, "EW")
 		if _, err := fmt.Fprintf(w, "%-8s  %c %02d %02d %05.2f    %c %03d %02d %05.2f  %4d  %s\r\n", wp.Id, latHemi, latDeg, latMin, latSec, lngHemi, lngDeg, lngMin, lngSec, int(wp.Altitude), wp.Description); err != nil {
 			return err
 		}

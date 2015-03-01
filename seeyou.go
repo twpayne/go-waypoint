@@ -1,4 +1,4 @@
-package seeyou
+package waypoint
 
 import (
 	"encoding/csv"
@@ -7,26 +7,23 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-
-	"bitbucket.org/twpayne/waypoint"
-	"bitbucket.org/twpayne/waypoint/internal/dmsh"
 )
 
 var (
-	latRegexp    = regexp.MustCompile(`\A\s*(\d{2})(\d{2}\.\d+)([NS])\s*\z`)
-	lngRegexp    = regexp.MustCompile(`\A\s*(\d{3})(\d{2}\.\d+)([EW])\s*\z`)
-	altRegexp    = regexp.MustCompile(`\A\s*(\d+(?:\.\d*)?)(m)\s*?\z`)
-	headerFields = strings.Split("name,code,country,lat,lon,elev,style,rwdir,rwlen,freq,desc", ",")
+	seeYouLatRegexp    = regexp.MustCompile(`\A\s*(\d{2})(\d{2}\.\d+)([NS])\s*\z`)
+	seeYouLngRegexp    = regexp.MustCompile(`\A\s*(\d{3})(\d{2}\.\d+)([EW])\s*\z`)
+	seeYouAltRegexp    = regexp.MustCompile(`\A\s*(\d+(?:\.\d*)?)(m)\s*?\z`)
+	seeYouHeaderFields = strings.Split("name,code,country,lat,lon,elev,style,rwdir,rwlen,freq,desc", ",")
 )
 
-type T struct{}
+type SeeYouFormat struct{}
 
-func New() *T {
-	return &T{}
+func NewSeeYouFormat() *SeeYouFormat {
+	return &SeeYouFormat{}
 }
 
-func (*T) Read(r io.Reader) (waypoint.Collection, error) {
-	var wc waypoint.Collection
+func (*SeeYouFormat) Read(r io.Reader) (Collection, error) {
+	var wc Collection
 	csvr := csv.NewReader(r)
 	csvr.FieldsPerRecord = -1
 	csvr.LazyQuotes = true
@@ -42,23 +39,23 @@ func (*T) Read(r io.Reader) (waypoint.Collection, error) {
 		}
 		switch lineno {
 		case 1:
-			if len(record) != len(headerFields) {
-				return nil, waypoint.ErrSyntax{LineNo: lineno}
+			if len(record) != len(seeYouHeaderFields) {
+				return nil, ErrSyntax{LineNo: lineno}
 			}
 			for i, f := range record {
-				if f != headerFields[i] {
-					return nil, waypoint.ErrSyntax{LineNo: lineno}
+				if f != seeYouHeaderFields[i] {
+					return nil, ErrSyntax{LineNo: lineno}
 				}
 			}
 		default:
 			if len(record) == 1 && record[0] == "-----Related Tasks-----" {
 				break
 			}
-			if len(record) != len(headerFields) {
+			if len(record) != len(seeYouHeaderFields) {
 				continue
 			}
 			id := record[1]
-			ss := latRegexp.FindStringSubmatch(record[3])
+			ss := seeYouLatRegexp.FindStringSubmatch(record[3])
 			if ss == nil {
 				continue
 			}
@@ -68,7 +65,7 @@ func (*T) Read(r io.Reader) (waypoint.Collection, error) {
 			if ss[3] == "S" {
 				lat = -lat
 			}
-			ss = lngRegexp.FindStringSubmatch(record[4])
+			ss = seeYouLngRegexp.FindStringSubmatch(record[4])
 			if ss == nil {
 				continue
 			}
@@ -78,7 +75,7 @@ func (*T) Read(r io.Reader) (waypoint.Collection, error) {
 			if ss[3] == "W" {
 				lng = -lng
 			}
-			ss = altRegexp.FindStringSubmatch(record[5])
+			ss = seeYouAltRegexp.FindStringSubmatch(record[5])
 			if ss == nil {
 				continue
 			}
@@ -87,7 +84,7 @@ func (*T) Read(r io.Reader) (waypoint.Collection, error) {
 				alt *= 0.3048
 			}
 			description := record[10]
-			w := &waypoint.T{
+			w := &T{
 				Id:          id,
 				Latitude:    lat,
 				Longitude:   lng,
@@ -100,19 +97,19 @@ func (*T) Read(r io.Reader) (waypoint.Collection, error) {
 	return wc, nil
 }
 
-func (*T) Write(w io.Writer, wc waypoint.Collection) error {
+func (*SeeYouFormat) Write(w io.Writer, wc Collection) error {
 	csvw := csv.NewWriter(w)
 	csvw.UseCRLF = true
-	if err := csvw.Write(headerFields); err != nil {
+	if err := csvw.Write(seeYouHeaderFields); err != nil {
 		return err
 	}
 	record := make([]string, 10)
 	for _, wp := range wc {
 		// FIXME record[0] = wp.Name
 		record[1] = wp.Id
-		latDeg, latMin, latHemi := dmsh.DMH(wp.Latitude, "NS")
+		latDeg, latMin, latHemi := DMH(wp.Latitude, "NS")
 		record[3] = fmt.Sprintf("%02d%06.3f%c", latDeg, latMin, latHemi)
-		lngDeg, lngMin, lngHemi := dmsh.DMH(wp.Longitude, "EW")
+		lngDeg, lngMin, lngHemi := DMH(wp.Longitude, "EW")
 		record[4] = fmt.Sprintf("%02d%06.3f%c", lngDeg, lngMin, lngHemi)
 		record[5] = fmt.Sprintf("%.1fm", wp.Altitude)
 		record[10] = wp.Description

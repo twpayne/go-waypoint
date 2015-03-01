@@ -1,8 +1,6 @@
-package oziexplorer
+package waypoint
 
 import (
-	"bitbucket.org/twpayne/waypoint"
-
 	"bufio"
 	"fmt"
 	"io"
@@ -11,23 +9,23 @@ import (
 )
 
 var (
-	headerRegexps = []*regexp.Regexp{
+	oziExplorerHeaderRegexps = []*regexp.Regexp{
 		regexp.MustCompile(`\AOziExplorer Waypoint File Version 1\.\d+\s*\z`),
 		regexp.MustCompile(`\AWGS 84\s*\z`),
 		regexp.MustCompile(`\AReserved 2\s*\z`),
 		regexp.MustCompile(`\AReserved 3\s*\z`),
 	}
-	commaRegexp = regexp.MustCompile(`\s*,\s*`)
+	oziExplorerCommaRegexp = regexp.MustCompile(`\s*,\s*`)
 )
 
-type T struct{}
+type OziExplorerFormat struct{}
 
-func New() *T {
-	return &T{}
+func NewOziExplorerFormat() *OziExplorerFormat {
+	return &OziExplorerFormat{}
 }
 
-func (*T) Read(r io.Reader) (waypoint.Collection, error) {
-	var wc waypoint.Collection
+func (*OziExplorerFormat) Read(r io.Reader) (Collection, error) {
+	var wc Collection
 	scanner := bufio.NewScanner(r)
 	lineno := 0
 	for scanner.Scan() {
@@ -35,11 +33,11 @@ func (*T) Read(r io.Reader) (waypoint.Collection, error) {
 		line := scanner.Text()
 		switch {
 		case lineno <= 4:
-			if headerRegexps[lineno-1].FindString(line) == "" {
-				return nil, waypoint.ErrSyntax{LineNo: lineno, Line: line}
+			if oziExplorerHeaderRegexps[lineno-1].FindString(line) == "" {
+				return nil, ErrSyntax{LineNo: lineno, Line: line}
 			}
 		default:
-			ss := commaRegexp.Split(line, -1)
+			ss := oziExplorerCommaRegexp.Split(line, -1)
 			if len(ss) < 15 {
 				continue
 			}
@@ -57,7 +55,7 @@ func (*T) Read(r io.Reader) (waypoint.Collection, error) {
 			if err != nil {
 				continue
 			}
-			w := &waypoint.T{
+			w := &T{
 				Id:          id,
 				Latitude:    lat,
 				Longitude:   lng,
@@ -70,7 +68,7 @@ func (*T) Read(r io.Reader) (waypoint.Collection, error) {
 	return wc, scanner.Err()
 }
 
-func (*T) Write(w io.Writer, wc waypoint.Collection) error {
+func (*OziExplorerFormat) Write(w io.Writer, wc Collection) error {
 	for _, s := range []string{
 		"OziExplorer Waypoint File Version 1.0\r\n",
 		"WGS 84\r\n",
