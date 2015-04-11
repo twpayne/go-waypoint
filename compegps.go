@@ -26,6 +26,14 @@ func NewCompeGPSFormat() *CompeGPSFormat {
 	return &CompeGPSFormat{}
 }
 
+func (*CompeGPSFormat) Extension() string {
+	return "wpt"
+}
+
+func (*CompeGPSFormat) Name() string {
+	return "compegps"
+}
+
 func (*CompeGPSFormat) Read(r io.Reader) (Collection, error) {
 	var wc Collection
 	scanner := bufio.NewScanner(r)

@@ -77,5 +77,12 @@ func TestOziExplorerReadWrite(t *testing.T) {
 			checkStrings(t, w.String(), c.s)
 			t.Errorf("w.String() == %v. want %v", w.String(), c.s)
 		}
+		_, f, err := Read(strings.NewReader(c.s))
+		if err != nil {
+			t.Errorf("Read(...) return %v, expected nil", err)
+		}
+		if _, ok := f.(*OziExplorerFormat); !ok {
+			t.Errorf("Read(...) returned a %T, expected an OziExplorerFormat", f)
+		}
 	}
 }

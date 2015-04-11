@@ -73,5 +73,12 @@ func TestFormatGeoReadWrite(t *testing.T) {
 		if w.String() != c.s {
 			t.Errorf("w.String() == %v. want %v", w.String(), c.s)
 		}
+		_, f, err := Read(strings.NewReader(c.s))
+		if err != nil {
+			t.Errorf("Read(...) return %v, expected nil", err)
+		}
+		if _, ok := f.(*FormatGeoFormat); !ok {
+			t.Errorf("Read(...) returned a %T, expected a FormatGeoFormat", f)
+		}
 	}
 }

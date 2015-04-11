@@ -22,6 +22,14 @@ func NewSeeYouFormat() *SeeYouFormat {
 	return &SeeYouFormat{}
 }
 
+func (*SeeYouFormat) Extension() string {
+	return "cup"
+}
+
+func (*SeeYouFormat) Name() string {
+	return "seeyou"
+}
+
 func (*SeeYouFormat) Read(r io.Reader) (Collection, error) {
 	var wc Collection
 	csvr := csv.NewReader(r)

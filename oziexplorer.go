@@ -24,6 +24,14 @@ func NewOziExplorerFormat() *OziExplorerFormat {
 	return &OziExplorerFormat{}
 }
 
+func (*OziExplorerFormat) Extension() string {
+	return "wpt"
+}
+
+func (*OziExplorerFormat) Name() string {
+	return "oziexplorer"
+}
+
 func (*OziExplorerFormat) Read(r io.Reader) (Collection, error) {
 	var wc Collection
 	scanner := bufio.NewScanner(r)

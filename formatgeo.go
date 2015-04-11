@@ -20,6 +20,14 @@ func NewFormatGeoFormat() *FormatGeoFormat {
 	return &FormatGeoFormat{}
 }
 
+func (*FormatGeoFormat) Extension() string {
+	return "wpt"
+}
+
+func (*FormatGeoFormat) Name() string {
+	return "formatgeo"
+}
+
 func (*FormatGeoFormat) Read(r io.Reader) (Collection, error) {
 	var wc Collection
 	scanner := bufio.NewScanner(r)

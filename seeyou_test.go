@@ -68,6 +68,13 @@ func TestSeeYouReadWrite(t *testing.T) {
 			}
 			t.Errorf("Read(strings.NewReader(%v)) == %v, %v, want %v, nil", c.s, got, err, c.wc)
 		}
+		_, f, err := Read(strings.NewReader(c.s))
+		if err != nil {
+			t.Errorf("Read(...) return %v, expected nil", err)
+		}
+		if _, ok := f.(*SeeYouFormat); !ok {
+			t.Errorf("Read(...) returned a %T, expected a SeeYouFormat", f)
+		}
 		/*
 			w := bytes.NewBuffer(nil)
 			if err := NewSeeYouFormat().Write(w, c.wc); err != nil {

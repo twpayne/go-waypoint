@@ -82,6 +82,13 @@ func TestCompeGPSReadWrite(t *testing.T) {
 		if err := NewCompeGPSFormat().Write(w, c.wc); err != nil {
 			t.Errorf("Write(%v) == %v. want nil", c.wc, err)
 		}
+		_, f, err := Read(strings.NewReader(c.s))
+		if err != nil {
+			t.Errorf("Read(...) return %v, expected nil", err)
+		}
+		if _, ok := f.(*CompeGPSFormat); !ok {
+			t.Errorf("Read(...) returned a %T, expected a CompeGPSFormat", f)
+		}
 		// FIXME
 		// if w.String() != c.s {
 		//	checkStrings(t, w.String(), c.s)

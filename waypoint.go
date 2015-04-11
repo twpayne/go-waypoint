@@ -1,9 +1,13 @@
 package waypoint
 
 import (
+	"errors"
 	"fmt"
 	"image/color"
+	"io"
 )
+
+var ErrUnknownFormat = errors.New("waypoint: unknown format")
 
 type ErrSyntax struct {
 	LineNo int
@@ -60,3 +64,49 @@ func Equal(t1, t2 *T) bool {
 }
 
 type Collection []*T
+
+type Format interface {
+	Extension() string
+	Name() string
+	Read(io.Reader) (Collection, error)
+	Write(io.Writer, Collection) error
+}
+
+func Read(rs io.ReadSeeker) (Collection, Format, error) {
+	var formats = []Format{
+		NewCompeGPSFormat(),
+		NewFormatGeoFormat(),
+		NewOziExplorerFormat(),
+		NewSeeYouFormat(),
+	}
+	offset, err := rs.Seek(0, 1)
+	if err != nil {
+		return nil, nil, err
+	}
+	for _, format := range formats {
+		if c, err := format.Read(rs); err == nil {
+			return c, format, nil
+		}
+		if _, err := rs.Seek(offset, 0); err != nil {
+			return nil, nil, err
+		}
+	}
+	return nil, nil, ErrUnknownFormat
+}
+
+func Write(w io.Writer, c Collection, format string) error {
+	var f Format
+	switch format {
+	case "compegps":
+		f = NewCompeGPSFormat()
+	case "formatgeo":
+		f = NewFormatGeoFormat()
+	case "oziexplorer":
+		f = NewOziExplorerFormat()
+	case "seeyou":
+		f = NewSeeYouFormat()
+	default:
+		return ErrUnknownFormat
+	}
+	return f.Write(w, c)
+}
