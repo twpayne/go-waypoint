@@ -62,8 +62,8 @@ func TestSeeYouReadWrite(t *testing.T) {
 	} {
 		if got, err := NewSeeYouFormat().Read(strings.NewReader(c.s)); err != nil || !reflect.DeepEqual(got, c.wc) {
 			for i, w := range c.wc {
-				if i < len(got) && !Equal(w, got[i]) {
-					t.Errorf("i=%d w=%#v got[%d]=%#v", i, w, *got[i])
+				if err := Equal(w, got[i]); err != nil {
+					t.Errorf("want %#v got=%#v, %v", w, got[i], err)
 				}
 			}
 			t.Errorf("Read(strings.NewReader(%v)) == %v, %v, want %v, nil", c.s, got, err, c.wc)

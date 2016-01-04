@@ -28,39 +28,39 @@ type T struct {
 	Color       color.Color
 }
 
-func Equal(t1, t2 *T) bool {
+func Equal(t1, t2 *T) error {
 	if t1.Id != t2.Id {
-		return false
+		return fmt.Errorf("Id mismatch: want %v, got %v", t1.Id, t2.Id)
 	}
 	if t1.Description != t2.Description {
-		return false
+		return fmt.Errorf("Description mismatch: want %v, got %v", t1.Description, t2.Description)
 	}
 	if t1.Latitude != t2.Latitude {
-		return false
+		return fmt.Errorf("Latitude mismatch: want %v, got %v", t1.Latitude, t2.Latitude)
 	}
 	if t1.Longitude != t2.Longitude {
-		return false
+		return fmt.Errorf("Longitude mismatch: want %v, got %v", t1.Longitude, t2.Longitude)
 	}
 	if t1.Altitude != t2.Altitude {
-		return false
+		return fmt.Errorf("Altitude mismatch: want %v, got %v", t1.Altitude, t2.Altitude)
 	}
 	if t1.Radius != t2.Radius {
-		return false
+		return fmt.Errorf("Radius mismatch: want %v, got %v", t1.Radius, t2.Radius)
 	}
 	if t1.Color == nil {
 		if t2.Color != nil {
-			return false
+			return fmt.Errorf("Color mismatch: want %#v, got %#v", t1.Color, t2.Color)
 		}
 	} else if t2.Color == nil {
-		return false
+		return fmt.Errorf("Color mismatch: want %#v, got %#v", t1.Color, t2.Color)
 	} else {
 		r1, g1, b1, a1 := t1.Color.RGBA()
 		r2, g2, b2, a2 := t2.Color.RGBA()
 		if r1 != r2 || g1 != g2 || b1 != b2 || a1 != a2 {
-			return false
+			return fmt.Errorf("Color mismatch: want %#v, got %#v", t1.Color, t2.Color)
 		}
 	}
-	return true
+	return nil
 }
 
 type Collection []*T
