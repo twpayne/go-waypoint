@@ -12,6 +12,7 @@ func (w *T) MarshalJSON() ([]byte, error) {
 			"type":        "Point",
 			"coordinates": []float64{w.Latitude, w.Longitude, w.Altitude},
 		},
+		"type": "Feature",
 	}
 	properties := make(map[string]interface{})
 	if w.Color != nil {
