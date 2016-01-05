@@ -72,6 +72,23 @@ type Format interface {
 	Write(io.Writer, Collection) error
 }
 
+func New(format string) (Format, error) {
+	switch format {
+	case "compegps":
+		return NewCompeGPSFormat(), nil
+	case "formatgeo":
+		return NewFormatGeoFormat(), nil
+	case "geojson":
+		return NewGeoJSONFormat(), nil
+	case "oziexplorer":
+		return NewOziExplorerFormat(), nil
+	case "seeyou":
+		return NewSeeYouFormat(), nil
+	default:
+		return nil, ErrUnknownFormat
+	}
+}
+
 func Read(rs io.ReadSeeker) (Collection, Format, error) {
 	var formats = []Format{
 		NewCompeGPSFormat(),
@@ -96,20 +113,9 @@ func Read(rs io.ReadSeeker) (Collection, Format, error) {
 }
 
 func Write(w io.Writer, c Collection, format string) error {
-	var f Format
-	switch format {
-	case "compegps":
-		f = NewCompeGPSFormat()
-	case "formatgeo":
-		f = NewFormatGeoFormat()
-	case "geojson":
-		f = NewGeoJSONFormat()
-	case "oziexplorer":
-		f = NewOziExplorerFormat()
-	case "seeyou":
-		f = NewSeeYouFormat()
-	default:
-		return ErrUnknownFormat
+	f, err := New(format)
+	if err != nil {
+		return err
 	}
 	return f.Write(w, c)
 }
