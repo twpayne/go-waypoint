@@ -60,7 +60,7 @@ func TestFormatGeoReadWrite(t *testing.T) {
 	} {
 		if got, err := NewFormatGeoFormat().Read(strings.NewReader(c.s)); err != nil || !reflect.DeepEqual(got, c.wc) {
 			for i, w := range c.wc {
-				if err := Equal(w, got[i]); err != nil {
+				if err := equal(w, got[i]); err != nil {
 					t.Errorf("want %#v got=%#v, %v", w, got[i], err)
 				}
 			}

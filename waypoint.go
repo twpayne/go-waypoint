@@ -28,7 +28,7 @@ type T struct {
 	Color       color.Color
 }
 
-func Equal(t1, t2 *T) error {
+func equal(t1, t2 *T) error {
 	if t1.Id != t2.Id {
 		return fmt.Errorf("Id mismatch: want %v, got %v", t1.Id, t2.Id)
 	}
