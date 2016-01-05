@@ -76,6 +76,7 @@ func Read(rs io.ReadSeeker) (Collection, Format, error) {
 	var formats = []Format{
 		NewCompeGPSFormat(),
 		NewFormatGeoFormat(),
+		NewGeoJSONFormat(),
 		NewOziExplorerFormat(),
 		NewSeeYouFormat(),
 	}
@@ -101,6 +102,8 @@ func Write(w io.Writer, c Collection, format string) error {
 		f = NewCompeGPSFormat()
 	case "formatgeo":
 		f = NewFormatGeoFormat()
+	case "geojson":
+		f = NewGeoJSONFormat()
 	case "oziexplorer":
 		f = NewOziExplorerFormat()
 	case "seeyou":
