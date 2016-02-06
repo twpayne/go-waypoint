@@ -109,7 +109,7 @@ func (*CompeGPSFormat) Write(w io.Writer, wc Collection) error {
 			lngHemi = 'W'
 		}
 		// FIXME find correct format specifiers for lat and lng
-		if _, err := fmt.Fprintf(w, "W  %6s A %.10f\x5c%c %.11f\x5c%c 27-MAR-62 00:00:00 %.6f %s\r\n",
+		if _, err := fmt.Fprintf(w, "W  %6s A %.10f\xbd%c %.11f\xbd%c 27-MAR-62 00:00:00 %.6f %s\r\n",
 			wp.Id, math.Abs(wp.Latitude), latHemi, math.Abs(wp.Longitude), lngHemi, wp.Altitude, wp.Description); err != nil {
 			return err
 		}
