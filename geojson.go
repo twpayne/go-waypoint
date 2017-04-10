@@ -17,7 +17,7 @@ type GeoJSONWaypoint struct {
 	}
 	Properties struct {
 		Color       string  `json:"color"`
-		Description string  `json:"description`
+		Description string  `json:"description"`
 		Radius      float64 `json:"radius"`
 	}
 }
