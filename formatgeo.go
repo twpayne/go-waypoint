@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	formatGeoIdRegexp   = regexp.MustCompile(`\A\$FormatGEO\s*\z`)
+	formatGeoIDRegexp   = regexp.MustCompile(`\A\$FormatGEO\s*\z`)
 	formatGeoLineRegexp = regexp.MustCompile(`\A(.*)\s+([NS])\s+(\d+)\s+(\d+)\s+(\d+\.\d+)\s+([EW])\s+(\d+)\s+(\d+)\s+(\d+\.\d+)\s+(-?\d+)(?:\s+(.*))?\z`)
 )
 
@@ -37,7 +37,7 @@ func (*FormatGeoFormat) Read(r io.Reader) (Collection, error) {
 		line := scanner.Text()
 		switch {
 		case lineno == 1:
-			if formatGeoIdRegexp.FindString(line) == "" {
+			if formatGeoIDRegexp.FindString(line) == "" {
 				return nil, ErrSyntax{LineNo: lineno, Line: line}
 			}
 		default:
@@ -63,7 +63,7 @@ func (*FormatGeoFormat) Read(r io.Reader) (Collection, error) {
 			id := strings.TrimSpace(ss[1])
 			description := strings.TrimSpace(ss[11])
 			w := &T{
-				Id:          id,
+				ID:          id,
 				Latitude:    lat,
 				Longitude:   lng,
 				Altitude:    alt,
@@ -82,7 +82,7 @@ func (*FormatGeoFormat) Write(w io.Writer, wc Collection) error {
 	for _, wp := range wc {
 		latDeg, latMin, latSec, latHemi := DMSH(wp.Latitude, "NS")
 		lngDeg, lngMin, lngSec, lngHemi := DMSH(wp.Longitude, "EW")
-		if _, err := fmt.Fprintf(w, "%-8s  %c %02d %02d %05.2f    %c %03d %02d %05.2f  %4d  %s\r\n", wp.Id, latHemi, latDeg, latMin, latSec, lngHemi, lngDeg, lngMin, lngSec, int(wp.Altitude), wp.Description); err != nil {
+		if _, err := fmt.Fprintf(w, "%-8s  %c %02d %02d %05.2f    %c %03d %02d %05.2f  %4d  %s\r\n", wp.ID, latHemi, latDeg, latMin, latSec, lngHemi, lngDeg, lngMin, lngSec, int(wp.Altitude), wp.Description); err != nil {
 			return err
 		}
 	}

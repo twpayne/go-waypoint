@@ -28,7 +28,7 @@ func TestCompeGPSReadWrite(t *testing.T) {
 				"w  box,0,0.0,16777215,255,1,7,,0.0\r\n",
 			wc: Collection{
 				&T{
-					Id:          "ACONCA",
+					ID:          "ACONCA",
 					Latitude:    -32.6533333333,
 					Longitude:   -70.0116666667,
 					Altitude:    6962,
@@ -36,7 +36,7 @@ func TestCompeGPSReadWrite(t *testing.T) {
 					Color:       color.RGBA{R: 255, G: 255, B: 255},
 				},
 				&T{
-					Id:          "BERGNE",
+					ID:          "BERGNE",
 					Latitude:    51.05195,
 					Longitude:   7.706117,
 					Altitude:    488,
@@ -44,7 +44,7 @@ func TestCompeGPSReadWrite(t *testing.T) {
 					Color:       color.RGBA{R: 255, G: 255, B: 255},
 				},
 				&T{
-					Id:          "GOLDEN",
+					ID:          "GOLDEN",
 					Latitude:    37.8175,
 					Longitude:   -122.478333333,
 					Altitude:    227,
@@ -52,7 +52,7 @@ func TestCompeGPSReadWrite(t *testing.T) {
 					Color:       color.RGBA{R: 255, G: 255, B: 255},
 				},
 				&T{
-					Id:          "REDSQU",
+					ID:          "REDSQU",
 					Latitude:    55.754167,
 					Longitude:   37.62,
 					Altitude:    123,
@@ -60,7 +60,7 @@ func TestCompeGPSReadWrite(t *testing.T) {
 					Color:       color.RGBA{R: 255, G: 255, B: 255},
 				},
 				&T{
-					Id:          "SYDNEY",
+					ID:          "SYDNEY",
 					Latitude:    -33.85695,
 					Longitude:   151.215267,
 					Altitude:    5,

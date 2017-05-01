@@ -93,7 +93,7 @@ func (*SeeYouFormat) Read(r io.Reader) (Collection, error) {
 			}
 			description := record[10]
 			w := &T{
-				Id:          id,
+				ID:          id,
 				Latitude:    lat,
 				Longitude:   lng,
 				Altitude:    alt,
@@ -114,7 +114,7 @@ func (*SeeYouFormat) Write(w io.Writer, wc Collection) error {
 	record := make([]string, 10)
 	for _, wp := range wc {
 		// FIXME record[0] = wp.Name
-		record[1] = wp.Id
+		record[1] = wp.ID
 		latDeg, latMin, latHemi := DMH(wp.Latitude, "NS")
 		record[3] = fmt.Sprintf("%02d%06.3f%c", latDeg, latMin, latHemi)
 		lngDeg, lngMin, lngHemi := DMH(wp.Longitude, "EW")

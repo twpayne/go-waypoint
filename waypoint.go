@@ -19,7 +19,7 @@ func (e ErrSyntax) Error() string {
 }
 
 type T struct {
-	Id          string
+	ID          string
 	Description string
 	Latitude    float64
 	Longitude   float64
@@ -29,8 +29,8 @@ type T struct {
 }
 
 func equal(t1, t2 *T) error {
-	if t1.Id != t2.Id {
-		return fmt.Errorf("Id mismatch: want %v, got %v", t1.Id, t2.Id)
+	if t1.ID != t2.ID {
+		return fmt.Errorf("ID mismatch: want %v, got %v", t1.ID, t2.ID)
 	}
 	if t1.Description != t2.Description {
 		return fmt.Errorf("Description mismatch: want %v, got %v", t1.Description, t2.Description)

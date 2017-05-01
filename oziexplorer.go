@@ -64,7 +64,7 @@ func (*OziExplorerFormat) Read(r io.Reader) (Collection, error) {
 				continue
 			}
 			w := &T{
-				Id:          id,
+				ID:          id,
 				Latitude:    lat,
 				Longitude:   lng,
 				Altitude:    0.3048 * float64(alt),
@@ -89,7 +89,7 @@ func (*OziExplorerFormat) Write(w io.Writer, wc Collection) error {
 	}
 	for i, wp := range wc {
 		if _, err := fmt.Fprintf(w, "%4d,%s,%11.6f,%11.6f,40652.2883218,0, 1, 3, 0, 65535,%-40s, 0, 0, 0, %d\r\n",
-			i+1, wp.Id, wp.Latitude, wp.Longitude, wp.Description, int(wp.Altitude/0.3048)); err != nil {
+			i+1, wp.ID, wp.Latitude, wp.Longitude, wp.Description, int(wp.Altitude/0.3048)); err != nil {
 			return err
 		}
 	}

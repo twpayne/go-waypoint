@@ -9,7 +9,7 @@ import (
 type GeoJSONFormat struct{}
 
 type GeoJSONWaypoint struct {
-	Id       string `json:"id"`
+	ID       string `json:"id"`
 	Type     string `json:"type"`
 	Geometry struct {
 		Type        string    `json:"type"`
@@ -57,7 +57,7 @@ func (*GeoJSONFormat) Read(r io.Reader) (Collection, error) {
 		}
 		// FIXME check size of f.Geometry.Coordinates
 		t := &T{
-			Id:          f.Id,
+			ID:          f.ID,
 			Description: f.Properties.Description,
 			Latitude:    f.Geometry.Coordinates[0],
 			Longitude:   f.Geometry.Coordinates[1],
@@ -79,7 +79,7 @@ func (*GeoJSONFormat) Write(w io.Writer, wc Collection) error {
 
 func (w *T) MarshalJSON() ([]byte, error) {
 	o := map[string]interface{}{
-		"id": w.Id,
+		"id": w.ID,
 		"geometry": map[string]interface{}{
 			"type":        "Point",
 			"coordinates": []float64{w.Latitude, w.Longitude, w.Altitude},
