@@ -4,10 +4,13 @@ import (
 	"math"
 )
 
+// D converts degrees, minutes, and seconds into decimal degrees.
 func D(d, m, s float64) float64 {
 	return d + m/60 + s/3600
 }
 
+// DMH converts degrees into degrees, decimal minutes, and a hemisphere. hs
+// should be "NS" for latitude and "EW" for latitude.
 func DMH(x float64, hs string) (d int, m float64, h uint8) {
 	if x < 0 {
 		h = hs[1]
@@ -20,6 +23,8 @@ func DMH(x float64, hs string) (d int, m float64, h uint8) {
 	return
 }
 
+// DMSH converts degrees to degrees, minutes, decimal seconds, and a
+// hemisphere. hs should be "NS" for latitude and "EW" for longitude.
 func DMSH(x float64, hs string) (d, m int, s float64, h uint8) {
 	if x < 0 {
 		h = hs[1]

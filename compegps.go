@@ -20,20 +20,25 @@ var (
 	compeGPSW2Regexp = regexp.MustCompile(`\Aw\s+[^,]*,[^,]*,[^,]*,(\d*),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*\s*\z`)
 )
 
+// A CompeGPSFormat represents a CompeGPS format.
 type CompeGPSFormat struct{}
 
+// NewCompeGPSFormat returns a new CompeGPSFormat.
 func NewCompeGPSFormat() *CompeGPSFormat {
 	return &CompeGPSFormat{}
 }
 
+// Extension returns the CompeGPS format extension.
 func (*CompeGPSFormat) Extension() string {
 	return "wpt"
 }
 
+// Name returns the CompeGPS format name.
 func (*CompeGPSFormat) Name() string {
 	return "compegps"
 }
 
+// Read reads waypoints from r.
 func (*CompeGPSFormat) Read(r io.Reader) (Collection, error) {
 	var wc Collection
 	scanner := bufio.NewScanner(r)
@@ -90,6 +95,7 @@ func (*CompeGPSFormat) Read(r io.Reader) (Collection, error) {
 	return wc, scanner.Err()
 }
 
+// Write writes wc to w.
 func (*CompeGPSFormat) Write(w io.Writer, wc Collection) error {
 	for _, s := range []string{
 		"G  WGS 84\r\n",

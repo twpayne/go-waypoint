@@ -7,8 +7,12 @@ import (
 	"io"
 )
 
-var ErrUnknownFormat = errors.New("waypoint: unknown format")
+var (
+	// ErrUnknownFormat is returned when the format is unknown.
+	ErrUnknownFormat = errors.New("waypoint: unknown format")
+)
 
+// An ErrSyntax is a syntax error.
 type ErrSyntax struct {
 	LineNo int
 	Line   string
@@ -18,6 +22,7 @@ func (e ErrSyntax) Error() string {
 	return fmt.Sprintf("syntax error:%d: %v", e.LineNo, e.Line)
 }
 
+// A T is a waypoint.
 type T struct {
 	ID          string
 	Description string
@@ -63,8 +68,10 @@ func equal(t1, t2 *T) error {
 	return nil
 }
 
+// A Collection is a collection of Ts.
 type Collection []*T
 
+// A Format is a waypoint format, with metadata and methods to read and write.
 type Format interface {
 	Extension() string
 	Name() string
@@ -72,6 +79,7 @@ type Format interface {
 	Write(io.Writer, Collection) error
 }
 
+// New returns a new Format. format must be a known format.
 func New(format string) (Format, error) {
 	switch format {
 	case "compegps":
@@ -89,6 +97,8 @@ func New(format string) (Format, error) {
 	}
 }
 
+// Read tries to read waypoints from rs using all known formats. When
+// successful, it returns the waypoints and the original format.
 func Read(rs io.ReadSeeker) (Collection, Format, error) {
 	var formats = []Format{
 		NewCompeGPSFormat(),
@@ -112,6 +122,7 @@ func Read(rs io.ReadSeeker) (Collection, Format, error) {
 	return nil, nil, ErrUnknownFormat
 }
 
+// Write writes c to w in format. Format must be a known format.
 func Write(w io.Writer, c Collection, format string) error {
 	f, err := New(format)
 	if err != nil {
