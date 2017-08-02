@@ -71,10 +71,7 @@ func (*GeoJSONFormat) Read(r io.Reader) (Collection, error) {
 }
 
 func (*GeoJSONFormat) Write(w io.Writer, wc Collection) error {
-	if err := json.NewEncoder(w).Encode(wc); err != nil {
-		return err
-	}
-	return nil
+	return json.NewEncoder(w).Encode(wc)
 }
 
 func (w *T) MarshalJSON() ([]byte, error) {
