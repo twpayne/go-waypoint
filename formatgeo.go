@@ -80,8 +80,8 @@ func (*FormatGeoFormat) Write(w io.Writer, wc Collection) error {
 		return err
 	}
 	for _, wp := range wc {
-		latDeg, latMin, latSec, latHemi := DMSH(wp.Latitude, "NS")
-		lngDeg, lngMin, lngSec, lngHemi := DMSH(wp.Longitude, "EW")
+		latDeg, latMin, latSec, latHemi := DMSH(wp.Latitude, NS)
+		lngDeg, lngMin, lngSec, lngHemi := DMSH(wp.Longitude, EW)
 		if _, err := fmt.Fprintf(w, "%-8s  %c %02d %02d %05.2f    %c %03d %02d %05.2f  %4d  %s\r\n", wp.ID, latHemi, latDeg, latMin, latSec, lngHemi, lngDeg, lngMin, lngSec, int(wp.Altitude), wp.Description); err != nil {
 			return err
 		}

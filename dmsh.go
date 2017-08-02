@@ -4,6 +4,13 @@ import (
 	"math"
 )
 
+type Hemisphere []uint8
+
+var (
+	EW Hemisphere = []uint8{'E', 'W'}
+	NS Hemisphere = []uint8{'N', 'S'}
+)
+
 // D converts degrees, minutes, and seconds into decimal degrees.
 func D(d, m, s float64) float64 {
 	return d + m/60 + s/3600
@@ -11,7 +18,7 @@ func D(d, m, s float64) float64 {
 
 // DMH converts degrees into degrees, decimal minutes, and a hemisphere. hs
 // should be "NS" for latitude and "EW" for latitude.
-func DMH(x float64, hs string) (d int, m float64, h uint8) {
+func DMH(x float64, hs Hemisphere) (d int, m float64, h uint8) {
 	if x < 0 {
 		h = hs[1]
 		x = -x
@@ -25,7 +32,7 @@ func DMH(x float64, hs string) (d int, m float64, h uint8) {
 
 // DMSH converts degrees to degrees, minutes, decimal seconds, and a
 // hemisphere. hs should be "NS" for latitude and "EW" for longitude.
-func DMSH(x float64, hs string) (d, m int, s float64, h uint8) {
+func DMSH(x float64, hs Hemisphere) (d, m int, s float64, h uint8) {
 	if x < 0 {
 		h = hs[1]
 		x = -x
