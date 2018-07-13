@@ -113,7 +113,7 @@ func (*SeeYouFormat) Write(w io.Writer, wc Collection) error {
 	}
 	record := make([]string, 11)
 	for _, wp := range wc {
-		// FIXME record[0] = wp.Name
+		record[0] = wp.ID
 		record[1] = wp.ID
 		latDeg, latMin, latHemi := DMH(wp.Latitude, NS)
 		record[3] = fmt.Sprintf("%02d%06.3f%c", latDeg, latMin, latHemi)
