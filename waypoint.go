@@ -8,17 +8,17 @@ import (
 )
 
 var (
-	// ErrUnknownFormat is returned when the format is unknown.
-	ErrUnknownFormat = errors.New("waypoint: unknown format")
+	// errUnknownFormat is returned when the format is unknown.
+	errUnknownFormat = errors.New("waypoint: unknown format")
 )
 
-// An ErrSyntax is a syntax error.
-type ErrSyntax struct {
+// An errSyntax is a syntax error.
+type errSyntax struct {
 	LineNo int
 	Line   string
 }
 
-func (e ErrSyntax) Error() string {
+func (e errSyntax) Error() string {
 	return fmt.Sprintf("syntax error:%d: %v", e.LineNo, e.Line)
 }
 
@@ -93,7 +93,7 @@ func New(format string) (Format, error) {
 	case "seeyou":
 		return NewSeeYouFormat(), nil
 	default:
-		return nil, ErrUnknownFormat
+		return nil, errUnknownFormat
 	}
 }
 
@@ -119,7 +119,7 @@ func Read(rs io.ReadSeeker) (Collection, Format, error) {
 			return nil, nil, err
 		}
 	}
-	return nil, nil, ErrUnknownFormat
+	return nil, nil, errUnknownFormat
 }
 
 // Write writes c to w in format. Format must be a known format.

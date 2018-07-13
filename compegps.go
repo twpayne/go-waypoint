@@ -50,7 +50,7 @@ func (*CompeGPSFormat) Read(r io.Reader) (Collection, error) {
 		switch {
 		case lineno <= 1:
 			if compeGPSHeaderRegexps[lineno-1].FindString(line) == "" {
-				return nil, ErrSyntax{LineNo: lineno, Line: line}
+				return nil, errSyntax{LineNo: lineno, Line: line}
 			}
 		case w == nil:
 			ss := compeGPSWRegexp.FindStringSubmatch(line)

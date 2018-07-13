@@ -42,7 +42,7 @@ func (*OziExplorerFormat) Read(r io.Reader) (Collection, error) {
 		switch {
 		case lineno <= 4:
 			if oziExplorerHeaderRegexps[lineno-1].FindString(line) == "" {
-				return nil, ErrSyntax{LineNo: lineno, Line: line}
+				return nil, errSyntax{LineNo: lineno, Line: line}
 			}
 		default:
 			ss := oziExplorerCommaRegexp.Split(line, -1)

@@ -38,7 +38,7 @@ func (*FormatGeoFormat) Read(r io.Reader) (Collection, error) {
 		switch {
 		case lineno == 1:
 			if formatGeoIDRegexp.FindString(line) == "" {
-				return nil, ErrSyntax{LineNo: lineno, Line: line}
+				return nil, errSyntax{LineNo: lineno, Line: line}
 			}
 		default:
 			ss := formatGeoLineRegexp.FindStringSubmatch(line)

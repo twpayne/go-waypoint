@@ -48,11 +48,11 @@ func (*SeeYouFormat) Read(r io.Reader) (Collection, error) {
 		switch lineno {
 		case 1:
 			if len(record) != len(seeYouHeaderFields) {
-				return nil, ErrSyntax{LineNo: lineno}
+				return nil, errSyntax{LineNo: lineno}
 			}
 			for i, f := range record {
 				if f != seeYouHeaderFields[i] {
-					return nil, ErrSyntax{LineNo: lineno}
+					return nil, errSyntax{LineNo: lineno}
 				}
 			}
 		default:
