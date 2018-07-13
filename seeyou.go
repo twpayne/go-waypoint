@@ -111,7 +111,7 @@ func (*SeeYouFormat) Write(w io.Writer, wc Collection) error {
 	if err := csvw.Write(seeYouHeaderFields); err != nil {
 		return err
 	}
-	record := make([]string, 10)
+	record := make([]string, 11)
 	for _, wp := range wc {
 		// FIXME record[0] = wp.Name
 		record[1] = wp.ID
