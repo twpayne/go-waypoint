@@ -125,5 +125,6 @@ func (*SeeYouFormat) Write(w io.Writer, wc Collection) error {
 			return err
 		}
 	}
-	return nil
+	csvw.Flush()
+	return csvw.Error()
 }
