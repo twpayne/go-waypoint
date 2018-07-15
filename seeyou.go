@@ -115,9 +115,9 @@ func (*SeeYouFormat) Write(w io.Writer, wc Collection) error {
 	for _, wp := range wc {
 		record[0] = wp.ID
 		record[1] = wp.ID
-		latDeg, latMin, latHemi := DMH(wp.Latitude, NS)
+		latDeg, latMin, latHemi := dmh(wp.Latitude, NS)
 		record[3] = fmt.Sprintf("%02d%06.3f%c", latDeg, latMin, latHemi)
-		lngDeg, lngMin, lngHemi := DMH(wp.Longitude, EW)
+		lngDeg, lngMin, lngHemi := dmh(wp.Longitude, EW)
 		record[4] = fmt.Sprintf("%02d%06.3f%c", lngDeg, lngMin, lngHemi)
 		record[5] = fmt.Sprintf("%.1fm", wp.Altitude)
 		record[10] = wp.Description
