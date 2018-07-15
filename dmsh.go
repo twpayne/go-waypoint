@@ -30,9 +30,9 @@ func DMH(x float64, hs Hemisphere) (d int, m float64, h uint8) {
 	return
 }
 
-// DMSH converts degrees to degrees, minutes, decimal seconds, and a
+// dmsh converts degrees to degrees, minutes, decimal seconds, and a
 // hemisphere. hs should be "NS" for latitude and "EW" for longitude.
-func DMSH(x float64, hs Hemisphere) (d, m int, s float64, h uint8) {
+func dmsh(x float64, hs Hemisphere) (d, m int, s float64, h uint8) {
 	if x < 0 {
 		h = hs[1]
 		x = -x
