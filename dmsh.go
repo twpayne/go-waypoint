@@ -7,8 +7,8 @@ import (
 type Hemisphere []uint8
 
 var (
-	EW Hemisphere = []uint8{'E', 'W'}
-	NS Hemisphere = []uint8{'N', 'S'}
+	ew Hemisphere = []uint8{'E', 'W'}
+	ns Hemisphere = []uint8{'N', 'S'}
 )
 
 // D converts degrees, minutes, and seconds into decimal degrees.
