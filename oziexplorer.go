@@ -18,21 +18,26 @@ var (
 	oziExplorerCommaRegexp = regexp.MustCompile(`\s*,\s*`)
 )
 
+// An OziExplorerFormat is an OziExplorer format.
 type OziExplorerFormat struct{}
 
+// NewOziExplorerFormat returns a new OziExplorerFormat.
 func NewOziExplorerFormat() *OziExplorerFormat {
 	return &OziExplorerFormat{}
 }
 
-func (*OziExplorerFormat) Extension() string {
+// Extension returns f's extension.
+func (f *OziExplorerFormat) Extension() string {
 	return "wpt"
 }
 
-func (*OziExplorerFormat) Name() string {
+// Name returns f's name.
+func (f *OziExplorerFormat) Name() string {
 	return "oziexplorer"
 }
 
-func (*OziExplorerFormat) Read(r io.Reader) (Collection, error) {
+// Read reads a Collection from r.
+func (f *OziExplorerFormat) Read(r io.Reader) (Collection, error) {
 	var wc Collection
 	scanner := bufio.NewScanner(r)
 	lineno := 0
@@ -76,14 +81,15 @@ func (*OziExplorerFormat) Read(r io.Reader) (Collection, error) {
 	return wc, scanner.Err()
 }
 
-func (*OziExplorerFormat) Write(w io.Writer, wc Collection) error {
+// Write writes wc to w.
+func (f *OziExplorerFormat) Write(w io.Writer, wc Collection) error {
 	for _, s := range []string{
 		"OziExplorer Waypoint File Version 1.0\r\n",
 		"WGS 84\r\n",
 		"Reserved 2\r\n",
 		"Reserved 3\r\n",
 	} {
-		if _, err := fmt.Fprintf(w, s); err != nil {
+		if _, err := fmt.Fprint(w, s); err != nil {
 			return err
 		}
 	}

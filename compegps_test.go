@@ -3,13 +3,16 @@ package waypoint
 import (
 	"bytes"
 	"image/color"
-	"reflect"
+	"strconv"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestCompeGPSReadWrite(t *testing.T) {
-	for _, c := range []struct {
+	for i, tc := range []struct {
 		s  string
 		wc Collection
 	}{
@@ -70,29 +73,23 @@ func TestCompeGPSReadWrite(t *testing.T) {
 			},
 		},
 	} {
-		if got, err := NewCompeGPSFormat().Read(strings.NewReader(c.s)); err != nil || !reflect.DeepEqual(got, c.wc) {
-			for i, w := range c.wc {
-				if err := equal(w, got[i]); err != nil {
-					t.Errorf("want %#v got=%#v, %v", w, got[i], err)
-				}
-			}
-			t.Errorf("Read(strings.NewReader(%v)) == %v, %v, want %v, nil", c.s, got, err, c.wc)
-		}
-		w := bytes.NewBuffer(nil)
-		if err := NewCompeGPSFormat().Write(w, c.wc); err != nil {
-			t.Errorf("Write(%v) == %v. want nil", c.wc, err)
-		}
-		_, f, err := Read(strings.NewReader(c.s))
-		if err != nil {
-			t.Errorf("Read(...) return %v, expected nil", err)
-		}
-		if _, ok := f.(*CompeGPSFormat); !ok {
-			t.Errorf("Read(...) returned a %T, expected a CompeGPSFormat", f)
-		}
-		// FIXME
-		// if w.String() != c.s {
-		//	checkStrings(t, w.String(), c.s)
-		//	t.Errorf("w.String() == %v. want %v", w.String(), c.s)
-		// }
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			wc, err := NewCompeGPSFormat().Read(strings.NewReader(tc.s))
+			require.NoError(t, err)
+			assert.Equal(t, tc.wc, wc)
+
+			w := &bytes.Buffer{}
+			require.NoError(t, NewCompeGPSFormat().Write(w, tc.wc))
+
+			_, f, err := Read(strings.NewReader(tc.s))
+			require.NoError(t, err)
+			require.IsType(t, &CompeGPSFormat{}, f)
+
+			// FIXME
+			// if w.String() != c.s {
+			//	checkStrings(t, w.String(), c.s)
+			//	t.Errorf("w.String() == %v. want %v", w.String(), c.s)
+			// }
+		})
 	}
 }

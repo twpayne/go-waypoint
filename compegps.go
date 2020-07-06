@@ -101,7 +101,7 @@ func (*CompeGPSFormat) Write(w io.Writer, wc Collection) error {
 		"G  WGS 84\r\n",
 		"U  1\r\n",
 	} {
-		if _, err := fmt.Fprintf(w, s); err != nil {
+		if _, err := fmt.Fprint(w, s); err != nil {
 			return err
 		}
 	}

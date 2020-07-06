@@ -2,13 +2,16 @@ package waypoint
 
 import (
 	"bytes"
-	"reflect"
+	"strconv"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestFormatGeoReadWrite(t *testing.T) {
-	for _, c := range []struct {
+	for i, tc := range []struct {
 		s  string
 		wc Collection
 	}{
@@ -58,27 +61,18 @@ func TestFormatGeoReadWrite(t *testing.T) {
 			},
 		},
 	} {
-		if got, err := NewFormatGeoFormat().Read(strings.NewReader(c.s)); err != nil || !reflect.DeepEqual(got, c.wc) {
-			for i, w := range c.wc {
-				if err := equal(w, got[i]); err != nil {
-					t.Errorf("want %#v got=%#v, %v", w, got[i], err)
-				}
-			}
-			t.Errorf("Read(strings.NewReader(%v)) == %v, %v, want %v, nil", c.s, got, err, c.wc)
-		}
-		w := bytes.NewBuffer(nil)
-		if err := NewFormatGeoFormat().Write(w, c.wc); err != nil {
-			t.Errorf("Write(%v) == %v. want nil", c.wc, err)
-		}
-		if w.String() != c.s {
-			t.Errorf("w.String() == %v. want %v", w.String(), c.s)
-		}
-		_, f, err := Read(strings.NewReader(c.s))
-		if err != nil {
-			t.Errorf("Read(...) return %v, expected nil", err)
-		}
-		if _, ok := f.(*FormatGeoFormat); !ok {
-			t.Errorf("Read(...) returned a %T, expected a FormatGeoFormat", f)
-		}
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			wc, err := NewFormatGeoFormat().Read(strings.NewReader(tc.s))
+			require.NoError(t, err)
+			assert.Equal(t, tc.wc, wc)
+
+			w := &bytes.Buffer{}
+			require.NoError(t, NewFormatGeoFormat().Write(w, tc.wc))
+			assert.Equal(t, tc.s, w.String())
+
+			_, f, err := Read(strings.NewReader(tc.s))
+			require.NoError(t, err)
+			require.IsType(t, &FormatGeoFormat{}, f)
+		})
 	}
 }

@@ -1,13 +1,16 @@
 package waypoint
 
 import (
+	"strconv"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_dmsh(t *testing.T) {
-	for _, c := range []struct {
+	for i, tc := range []struct {
 		x  float64
-		hs Hemisphere
+		hs hemisphere
 		d  int
 		m  int
 		s  float64
@@ -20,8 +23,12 @@ func Test_dmsh(t *testing.T) {
 		{x: 1.75, hs: ns, d: 1, m: 45, s: 0, h: 'N'},
 		{x: float64(1) / 3600, hs: ns, d: 0, m: 0, s: 1, h: 'N'},
 	} {
-		if d, m, s, h := dmsh(c.x, c.hs); d != c.d || m != c.m || s != c.s || h != c.h {
-			t.Errorf("dmsh(%v, %v) == %v, %v, %v, %v, want %v, %v, %v, %v", c.x, c.hs, d, m, s, h, c.d, c.m, c.s, c.h)
-		}
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			d, m, s, h := dmsh(tc.x, tc.hs)
+			assert.Equal(t, tc.d, d)
+			assert.Equal(t, tc.m, m)
+			assert.Equal(t, tc.s, s)
+			assert.Equal(t, tc.h, h)
+		})
 	}
 }
