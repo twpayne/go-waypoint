@@ -14,21 +14,26 @@ var (
 	formatGeoLineRegexp = regexp.MustCompile(`\A(.*)\s+([NS])\s+(\d+)\s+(\d+)\s+(\d+\.\d+)\s+([EW])\s+(\d+)\s+(\d+)\s+(\d+\.\d+)\s+(-?\d+)(?:\s+(.*))?\z`)
 )
 
+// A FormatGeoFormat is a GeoFormat format.
 type FormatGeoFormat struct{}
 
+// NewFormatGeoFormat returns a new FormatGeoFormat.
 func NewFormatGeoFormat() *FormatGeoFormat {
 	return &FormatGeoFormat{}
 }
 
-func (*FormatGeoFormat) Extension() string {
+// Extension returns f's extension.
+func (f *FormatGeoFormat) Extension() string {
 	return "wpt"
 }
 
-func (*FormatGeoFormat) Name() string {
+// Name returns f's name.
+func (f *FormatGeoFormat) Name() string {
 	return "formatgeo"
 }
 
-func (*FormatGeoFormat) Read(r io.Reader) (Collection, error) {
+// Read reads a Collection from r.
+func (f *FormatGeoFormat) Read(r io.Reader) (Collection, error) {
 	var wc Collection
 	scanner := bufio.NewScanner(r)
 	lineno := 0
@@ -75,7 +80,8 @@ func (*FormatGeoFormat) Read(r io.Reader) (Collection, error) {
 	return wc, scanner.Err()
 }
 
-func (*FormatGeoFormat) Write(w io.Writer, wc Collection) error {
+// Write writes wc to w.
+func (f *FormatGeoFormat) Write(w io.Writer, wc Collection) error {
 	if _, err := fmt.Fprintf(w, "$FormatGEO\r\n"); err != nil {
 		return err
 	}

@@ -6,8 +6,10 @@ import (
 	"io"
 )
 
+// A GeoJSONFormat is a GeoJSON format.
 type GeoJSONFormat struct{}
 
+// A GeoJSONWaypoint is a GeoJSON waypoint.
 type GeoJSONWaypoint struct {
 	ID       string `json:"id"`
 	Type     string `json:"type"`
@@ -22,24 +24,30 @@ type GeoJSONWaypoint struct {
 	}
 }
 
+// A GeoJSONWaypointFeatureCollection is a GeoJSON FeatureCollection of GeoJSON
+// waypoints.
 type GeoJSONWaypointFeatureCollection struct {
 	Type     string            `json:"type"`
 	Features []GeoJSONWaypoint `json:"features"`
 }
 
+// NewGeoJSONFormat returns a new GeoJSONFormat.
 func NewGeoJSONFormat() *GeoJSONFormat {
 	return &GeoJSONFormat{}
 }
 
-func (*GeoJSONFormat) Extension() string {
+// Extension returns f's extension.
+func (f *GeoJSONFormat) Extension() string {
 	return "json"
 }
 
-func (*GeoJSONFormat) Name() string {
+// Name returns f's name.
+func (f *GeoJSONFormat) Name() string {
 	return "geojson"
 }
 
-func (*GeoJSONFormat) Read(r io.Reader) (Collection, error) {
+// Read reads a Collection from r.
+func (f *GeoJSONFormat) Read(r io.Reader) (Collection, error) {
 	var wfc GeoJSONWaypointFeatureCollection
 	if err := json.NewDecoder(r).Decode(&wfc); err != nil {
 		return nil, err
@@ -63,17 +71,19 @@ func (*GeoJSONFormat) Read(r io.Reader) (Collection, error) {
 			Longitude:   f.Geometry.Coordinates[1],
 			Altitude:    f.Geometry.Coordinates[2],
 			Radius:      f.Properties.Radius,
-			//Color:       f.Properties.Color, // FIXME
+			// Color:       f.Properties.Color, // FIXME
 		}
 		c = append(c, t)
 	}
 	return c, nil
 }
 
-func (*GeoJSONFormat) Write(w io.Writer, wc Collection) error {
+// Write writes c to w.
+func (f *GeoJSONFormat) Write(w io.Writer, wc Collection) error {
 	return json.NewEncoder(w).Encode(wc)
 }
 
+// MarshalJSON implements encoding/json.Marshaler.
 func (w *T) MarshalJSON() ([]byte, error) {
 	o := map[string]interface{}{
 		"id": w.ID,
@@ -100,6 +110,7 @@ func (w *T) MarshalJSON() ([]byte, error) {
 	return json.Marshal(o)
 }
 
+// MarshalJSON implements encoding/json.Marshaler.
 func (wc Collection) MarshalJSON() ([]byte, error) {
 	o := map[string]interface{}{
 		"type":     "FeatureCollection",

@@ -16,21 +16,26 @@ var (
 	seeYouHeaderFields = strings.Split("name,code,country,lat,lon,elev,style,rwdir,rwlen,freq,desc", ",")
 )
 
+// A SeeYouFormat is a SeeYou format.
 type SeeYouFormat struct{}
 
+// NewSeeYouFormat returns a new SeeYouFormat.
 func NewSeeYouFormat() *SeeYouFormat {
 	return &SeeYouFormat{}
 }
 
-func (*SeeYouFormat) Extension() string {
+// Extension returns f's extension.
+func (f *SeeYouFormat) Extension() string {
 	return "cup"
 }
 
-func (*SeeYouFormat) Name() string {
+// Name returns f's name.
+func (f *SeeYouFormat) Name() string {
 	return "seeyou"
 }
 
-func (*SeeYouFormat) Read(r io.Reader) (Collection, error) {
+// Read reads a Collection from r.
+func (f *SeeYouFormat) Read(r io.Reader) (Collection, error) {
 	var wc Collection
 	csvr := csv.NewReader(r)
 	csvr.FieldsPerRecord = -1
@@ -105,6 +110,7 @@ func (*SeeYouFormat) Read(r io.Reader) (Collection, error) {
 	return wc, nil
 }
 
+// Write writes wc to w.
 func (*SeeYouFormat) Write(w io.Writer, wc Collection) error {
 	csvw := csv.NewWriter(w)
 	csvw.UseCRLF = true
