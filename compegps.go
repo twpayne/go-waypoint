@@ -16,7 +16,7 @@ var (
 		regexp.MustCompile(`\AG\s+WGS\s+84\s*\z`),
 		regexp.MustCompile(`\AU\s+1\s*\z`),
 	}
-	compeGPSWRegexp  = regexp.MustCompile(`\AW\s+(.{6})\s+A\s+(\d+(?:\.\d*)?).?([NS])\s+(\d+(?:\.\d*)?).?([EW])\s+\S+\s+\S+\s+(\d+(?:\.\d*)?)(.*)\z`)
+	compeGPSWRegexp  = regexp.MustCompile(`\AW\s+(\S+)\s+A\s+(\d+(?:\.\d*)?).?([NS])\s+(\d+(?:\.\d*)?).?([EW])\s+\S+\s+\S+\s+(-?\d+(?:\.\d*)?)(.*)\z`)
 	compeGPSW2Regexp = regexp.MustCompile(`\Aw\s+[^,]*,[^,]*,[^,]*,(\d*),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*\s*\z`)
 )
 

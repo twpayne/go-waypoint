@@ -19,8 +19,10 @@ func TestTestData(t *testing.T) {
 			defer func() {
 				assert.NoError(t, f.Close())
 			}()
-			_, _, err = Read(f)
+			collection, format, err := Read(f)
 			require.NoError(t, err)
+			assert.NotEmpty(t, collection)
+			assert.NotNil(t, format)
 		})
 	}
 }
