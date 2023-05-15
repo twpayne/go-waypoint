@@ -16,7 +16,7 @@ func TestSeeYouReadWrite(t *testing.T) {
 		{
 			s: "name,code,country,lat,lon,elev,style,rwdir,rwlen,freq,desc\r\n" +
 				"\"Aconcagua\",\"Aconcagua\",,3239.200S,07000.700W,6962.0m,7,0,0.0m,\"\",\"Highest mountain in south-america\"\r\n" +
-				//"\"Bergneustadt\",\"\",,5103.117N  ,00742.367E,  488.0m,  5  ,040,590m,\"123.650\" , \"Rabbit holes, 20\" ditch south end of rwy\"\r\n" +
+				// "\"Bergneustadt\",\"\",,5103.117N  ,00742.367E,  488.0m,  5  ,040,590m,\"123.650\" , \"Rabbit holes, 20\" ditch south end of rwy\"\r\n" +
 				"\"Bergneustadt\",\"\",,5103.117N  ,00742.367E,  488.0m,  5  ,040,590m,\"123.650\", \"Rabbit holes, 20\" ditch south end of rwy\"\r\n" +
 				"\"Golden Gate Bridge\",\"GGB\",,3749.050N,12228.700W,227.0m,14,0,0.005NM,\"\",\"\"\r\n" +
 				"\"Red Square\",\"RedSqr\",,5545.250N,03737.200E,123.0m,3,90,0.01ml,\"\",\"\"\r\n" +
