@@ -7,8 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
+	"github.com/alecthomas/assert/v2"
 )
 
 func TestCompeGPSReadWrite(t *testing.T) {
@@ -75,15 +74,15 @@ func TestCompeGPSReadWrite(t *testing.T) {
 	} {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			wc, err := NewCompeGPSFormat().Read(strings.NewReader(tc.s))
-			require.NoError(t, err)
+			assert.NoError(t, err)
 			assert.Equal(t, tc.wc, wc)
 
 			w := &bytes.Buffer{}
-			require.NoError(t, NewCompeGPSFormat().Write(w, tc.wc))
+			assert.NoError(t, NewCompeGPSFormat().Write(w, tc.wc))
 
 			_, f, err := Read(strings.NewReader(tc.s))
-			require.NoError(t, err)
-			require.IsType(t, &CompeGPSFormat{}, f)
+			assert.NoError(t, err)
+			assertIsType(t, &CompeGPSFormat{}, f)
 
 			// FIXME
 			// if w.String() != c.s {

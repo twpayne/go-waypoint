@@ -5,24 +5,32 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
+	"github.com/alecthomas/assert/v2"
 )
 
 func TestTestData(t *testing.T) {
 	matches, err := filepath.Glob(filepath.Join("testdata", "*"))
-	require.NoError(t, err)
+	assert.NoError(t, err)
 	for _, match := range matches {
 		t.Run(match, func(t *testing.T) {
 			f, err := os.Open(match)
-			require.NoError(t, err)
+			assert.NoError(t, err)
 			defer func() {
 				assert.NoError(t, f.Close())
 			}()
 			collection, format, err := Read(f)
-			require.NoError(t, err)
-			assert.NotEmpty(t, collection)
-			assert.NotNil(t, format)
+			assert.NoError(t, err)
+			assert.NotZero(t, len(collection))
+			assert.NotZero(t, format)
 		})
 	}
+}
+
+func assertIsType[T any](t testing.TB, expected T, actual any) {
+	_, ok := actual.(T)
+	if ok {
+		return
+	}
+	t.Helper()
+	t.Fatalf("Expected %v to be of type %T", actual, expected)
 }

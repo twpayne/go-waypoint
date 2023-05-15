@@ -6,8 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
+	"github.com/alecthomas/assert/v2"
 )
 
 func TestOziExplorerReadWrite(t *testing.T) {
@@ -66,16 +65,16 @@ func TestOziExplorerReadWrite(t *testing.T) {
 	} {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			wc, err := NewOziExplorerFormat().Read(strings.NewReader(tc.s))
-			require.NoError(t, err)
+			assert.NoError(t, err)
 			assert.Equal(t, tc.wc, wc)
 
 			w := &bytes.Buffer{}
-			require.NoError(t, NewOziExplorerFormat().Write(w, tc.wc))
+			assert.NoError(t, NewOziExplorerFormat().Write(w, tc.wc))
 			assert.Equal(t, tc.s, w.String())
 
 			_, f, err := Read(strings.NewReader(tc.s))
-			require.NoError(t, err)
-			require.IsType(t, &OziExplorerFormat{}, f)
+			assert.NoError(t, err)
+			assertIsType(t, &OziExplorerFormat{}, f)
 		})
 	}
 }
